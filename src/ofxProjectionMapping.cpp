@@ -236,63 +236,53 @@ void ofxProjectionMapping::windowResized(ofResizeEventArgs &e) {
 void ofxProjectionMapping::loadPreset(string path) {
     int idx = 0;
     ofXml xml;
-    xml.load(path);
-    /*
-    xml.setToParent();
-    if(xml.exists("Quads")) {
-        xml.setTo("Quads[0]");
-        do {
-            if (xml.getName() == "Quads" && xml.setTo("Quad[0]")) {
-                do {                    
-                    quads[idx]->setInputCorner(0, xml.getValue<int>("iX0"), xml.getValue<int>("iY0"));
-                    quads[idx]->setInputCorner(1, xml.getValue<int>("iX1"), xml.getValue<int>("iY1"));
-                    quads[idx]->setInputCorner(2, xml.getValue<int>("iX2"), xml.getValue<int>("iY2"));
-                    quads[idx]->setInputCorner(3, xml.getValue<int>("iX3"), xml.getValue<int>("iY3"));
-                    quads[idx]->setOutputCorner(0, xml.getValue<int>("oX0"), xml.getValue<int>("oY0"));
-                    quads[idx]->setOutputCorner(1, xml.getValue<int>("oX1"), xml.getValue<int>("oY1"));
-                    quads[idx]->setOutputCorner(2, xml.getValue<int>("oX2"), xml.getValue<int>("oY2"));
-                    quads[idx]->setOutputCorner(3, xml.getValue<int>("oX3"), xml.getValue<int>("oY3"));
-                    idx++;
-                }
-                while (xml.setToSibling());
-                xml.setToParent();
-            }
-        }
-        while (xml.setToSibling());
+    
+    if(!xml.load(path)){
+        ofLogError() << "Couldn't load file";
     }
-     */
+    
+    auto quadsChild = xml.findFirst("Quads");
+    auto allSavedQuads = quadsChild.getChildren("Quad");
+    
+    for(auto & quad : allSavedQuads){
+        quads[idx]->setInputCorner(0,  quad.getAttribute("iX0").getIntValue(),  quad.getAttribute("iY0").getIntValue());
+        quads[idx]->setInputCorner(1, quad.getAttribute("iX1").getIntValue(), quad.getAttribute("iY1").getIntValue());
+        quads[idx]->setInputCorner(2, quad.getAttribute("iX2").getIntValue(), quad.getAttribute("iY2").getIntValue());
+        quads[idx]->setInputCorner(3, quad.getAttribute("iX3").getIntValue(), quad.getAttribute("iY3").getIntValue());
+        quads[idx]->setOutputCorner(0, quad.getAttribute("oX0").getIntValue(), quad.getAttribute("oY0").getIntValue());
+        quads[idx]->setOutputCorner(1, quad.getAttribute("oX1").getIntValue(), quad.getAttribute("oY1").getIntValue());
+        quads[idx]->setOutputCorner(2, quad.getAttribute("oX2").getIntValue(), quad.getAttribute("oY2").getIntValue());
+        quads[idx]->setOutputCorner(3, quad.getAttribute("oX3").getIntValue(), quad.getAttribute("oY3").getIntValue());
+        idx++;
+    }
 }
 
 //-------
 void ofxProjectionMapping::savePreset(string path) {
     ofXml xml;
-    /*
-    xml.addChild("Quads");
-    xml.setTo("Quads");
+    
+    auto quadsChild = xml.appendChild("Quads");
+    
     for (int i=0; i<quads.size(); i++) {
-        ofXml quadXml;
-        quadXml.addChild("Quad");
-        quadXml.setTo("Quad");
-        quadXml.addValue("iX0", quads[i]->getInputCorner(0).x);
-        quadXml.addValue("iY0", quads[i]->getInputCorner(0).y);
-        quadXml.addValue("iX1", quads[i]->getInputCorner(1).x);
-        quadXml.addValue("iY1", quads[i]->getInputCorner(1).y);
-        quadXml.addValue("iX2", quads[i]->getInputCorner(2).x);
-        quadXml.addValue("iY2", quads[i]->getInputCorner(2).y);
-        quadXml.addValue("iX3", quads[i]->getInputCorner(3).x);
-        quadXml.addValue("iY3", quads[i]->getInputCorner(3).y);
-        quadXml.addValue("oX0", quads[i]->getOutputCorner(0).x);
-        quadXml.addValue("oY0", quads[i]->getOutputCorner(0).y);
-        quadXml.addValue("oX1", quads[i]->getOutputCorner(1).x);
-        quadXml.addValue("oY1", quads[i]->getOutputCorner(1).y);
-        quadXml.addValue("oX2", quads[i]->getOutputCorner(2).x);
-        quadXml.addValue("oY2", quads[i]->getOutputCorner(2).y);
-        quadXml.addValue("oX3", quads[i]->getOutputCorner(3).x);
-        quadXml.addValue("oY3", quads[i]->getOutputCorner(3).y);
-        xml.addXml(quadXml);
+        ofXml quadXml= quadsChild.appendChild("Quad");
+        quadXml.setAttribute("iX0", quads[i]->getInputCorner(0).x);
+        quadXml.setAttribute("iY0", quads[i]->getInputCorner(0).y);
+        quadXml.setAttribute("iX1", quads[i]->getInputCorner(1).x);
+        quadXml.setAttribute("iY1", quads[i]->getInputCorner(1).y);
+        quadXml.setAttribute("iX2", quads[i]->getInputCorner(2).x);
+        quadXml.setAttribute("iY2", quads[i]->getInputCorner(2).y);
+        quadXml.setAttribute("iX3", quads[i]->getInputCorner(3).x);
+        quadXml.setAttribute("iY3", quads[i]->getInputCorner(3).y);
+        quadXml.setAttribute("oX0", quads[i]->getOutputCorner(0).x);
+        quadXml.setAttribute("oY0", quads[i]->getOutputCorner(0).y);
+        quadXml.setAttribute("oX1", quads[i]->getOutputCorner(1).x);
+        quadXml.setAttribute("oY1", quads[i]->getOutputCorner(1).y);
+        quadXml.setAttribute("oX2", quads[i]->getOutputCorner(2).x);
+        quadXml.setAttribute("oY2", quads[i]->getOutputCorner(2).y);
+        quadXml.setAttribute("oX3", quads[i]->getOutputCorner(3).x);
+        quadXml.setAttribute("oY3", quads[i]->getOutputCorner(3).y);
     }
-    xml.setToParent();
     xml.save(path);
-     */
 }
+
 
